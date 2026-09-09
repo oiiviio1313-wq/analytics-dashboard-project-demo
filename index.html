@@ -3,17 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <title>Data Analytics Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg:           #F5F6F8;
+            --surface:      #E8ECF4;
+            --border:       #D1D8E8;
+            --text:         #1A1C22;
+            --text-muted:   #6B7280;
+            --accent:       #2563EB;
+            --accent-light: #DBEAFE;
+        }
+
+        html {
+            font-size: 16px;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 88px 32px 120px;
+        }
+
+        /* ── Header ── */
+        h1 {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 1.375rem;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        body > p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.01em;
+            margin-bottom: 56px;
+            padding-bottom: 56px;
+            border-bottom: 1.5px solid var(--border);
+        }
+
+        /* ── Project list ── */
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        ul li {
+            position: relative;
+            background: var(--surface);
+            padding: 28px 28px 28px 24px;
+            border-left: 3px solid var(--border);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        ul li:hover {
+            border-left-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        /* index number */
+        ul li:nth-child(1)::before { content: '01'; }
+        ul li:nth-child(2)::before { content: '02'; }
+
+        ul li::before {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 10px;
+            letter-spacing: 0.04em;
+        }
+
+        h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 0.9375rem;
+            line-height: 1.55;
+            color: var(--text);
+            margin-bottom: 16px;
+            max-width: 48ch;
+        }
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            padding: 5px 10px;
+            background: white;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        a::after {
+            content: '↗';
+            font-size: 0.75em;
+        }
+
+        a:hover {
+            border-color: var(--accent);
+            background: white;
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition: none !important; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 48px 20px 80px; }
+            h1 { font-size: 1.2rem; }
+            ul li { padding: 22px 20px 22px 18px; }
+        }
+    </style>
 </head>
 <body>
     <h1>数据分析作品集</h1>
     <p>Data Analytics & Visualization Projects</p>
     <ul>
         <li>
-            <h3>Google Merchandise Store电商数据异动归因一页报告</h3>
+            <h3>Olist 巴西电商平台黑五活动看板</h3>
             <a href="project-1/">查看可视化看板</a>
         </li>
         <li>
-            <h3>Olist 巴西电商平台黑五活动看板</h3>
+            <h3>Google Merchandise Store电商数据异动归因一页报告</h3>
             <a href="project-2/">查看可视化看板</a>
         </li>
     </ul>
