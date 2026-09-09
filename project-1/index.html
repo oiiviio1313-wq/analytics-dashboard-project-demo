@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1280" />
+<title>Olist 2017 黑五大促复盘 · AntV G2 v5 · SaaS 运营屏</title>
+<style>
+:root{
+  --bg:#F5F7FA; --card:#FFFFFF; --border:#E5E7EB; --ink:#0F172A; --mute:#64748B;
+  --faint:#94A3B8; --brand:#1D4ED8; --brand2:#3B82F6; --brand3:#0EA5E9;
+  /* 业务语义色：good=有利的业务变化(绿), bad=不利的业务变化(红), warn=中性/警示 */
+  --good:#16A34A; --bad:#DC2626; --warn:#F59E0B;
+  --phaseBase:#94A3B8; --phaseWarm:#3B82F6; --phaseAct:#1D4ED8; --phaseAfter:#CBD5E1;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:13px; line-height:1.5;
+  font-feature-settings:"tnum" 1, "lnum" 1;
+}
+.container{max-width:1280px;margin:0 auto;padding:24px 24px 32px}
+.num{font-variant-numeric:tabular-nums}
+
+/* HEADER */
+.head{display:flex;align-items:flex-end;justify-content:space-between;
+  border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:18px}
+.head h1{font-size:22px;font-weight:700;margin:0 0 6px;letter-spacing:-.3px;color:var(--ink)}
+.head .sub{color:var(--mute);font-size:12px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.tag{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:4px;
+  font-size:10px;color:var(--mute);font-weight:500;letter-spacing:.6px;background:#FAFBFC}
+.head .meta{font-size:11px;color:var(--mute);text-align:right;line-height:1.7}
+.head .meta b{color:var(--ink);font-weight:600}
+
+/* KPI STRIP */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;box-shadow:0 1px 2px rgba(15,23,42,.04);
+  display:flex;flex-direction:column;min-height:112px}
+.kpi .lab{font-size:11px;color:var(--mute);font-weight:500;letter-spacing:.3px}
+.kpi .val{font-size:26px;font-weight:700;line-height:1.15;margin:8px 0 4px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.4px}
+.kpi .delta{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:3px}
+.kpi .delta.good{color:var(--good)}
+.kpi .delta.bad{color:var(--bad)}
+.kpi .delta.warn{color:var(--warn)}
+.kpi .ctx{font-size:10.5px;color:var(--mute);margin-top:auto;line-height:1.45}
+
+/* ROWS */
+.row{display:grid;gap:16px;margin-bottom:16px}
+.row.a{grid-template-columns:2fr 1fr}
+.row.b{grid-template-columns:1fr 1fr}
+.row.c{grid-template-columns:repeat(4,1fr)}
+.row.warmup{grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.card h3{margin:0 0 4px;font-size:14px;font-weight:600;letter-spacing:-.1px;color:var(--ink)}
+.card .ex{font-size:11px;color:var(--mute);margin-bottom:10px;line-height:1.5}
+.card .cap{font-size:10.5px;color:var(--mute);margin-top:6px;line-height:1.5;
+  padding-top:6px;border-top:1px dashed var(--border)}
+
+/* CHART CONTAINERS */
+.chart{width:100%}
+.chart.a1{height:340px}
+.chart.b1{height:470px}
+.chart.b2{height:470px}
+/* B2 BCG 四象限角标（脱离 G2 渲染管线 · 绝对定位放卡片四角） */
+.b2-wrap{position:relative}
+.quadrant-chip{position:absolute;z-index:5;background:#FFFFFF;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:.5px;box-shadow:0 2px 6px rgba(15,23,42,.12);pointer-events:none;line-height:1.3}
+.chip-star{top:34px;right:36px;color:#1D4ED8}
+.chip-q   {top:34px;left:50px;color:#B91C1C}
+.chip-cow {bottom:32px;right:36px;color:#15803D}
+.chip-dog {bottom:32px;left:50px;color:#64748B}
+.chart.c{height:170px}
+
+/* SMALL MULTIPLES */
+.mini-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;min-height:18px}
+.mini-h .name{font-size:12px;font-weight:600;color:var(--ink)}
+.mini-h .unit{font-size:10px;color:var(--mute);font-weight:400;margin-left:2px}
+.mini-h .diff{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.mini-h .diff.good{color:var(--good)}
+.mini-h .diff.bad{color:var(--bad)}
+.mini-h .diff.warn{color:var(--warn)}
+
+.chart.wh{height:200px}
+
+/* WARMUP MINI CARDS */
+.warmup-card .big{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.5px;line-height:1.1;margin:6px 0 2px}
+.warmup-card .delta-line{font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.warmup-card .label-row{font-size:10.5px;color:var(--mute);margin-top:8px;display:flex;justify-content:space-between}
+.warmup-card .label-row span b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;
+  font-variant-numeric:tabular-nums;letter-spacing:.3px}
+.badge.good{background:#DCFCE7;color:var(--good)}
+.badge.bad{background:#FEE2E2;color:var(--bad)}
+.badge.warn{background:#FEF3C7;color:var(--warn)}
+
+/* ROW C WRAPPER */
+.row.c-wrap{margin-bottom:16px}
+
+/* FOOTER */
+.foot{margin-top:6px;padding-top:14px;border-top:1px solid var(--border);
+  font-size:11px;color:var(--mute);display:flex;justify-content:space-between;gap:24px}
+.foot .lim b{color:var(--ink);font-weight:600}
+.foot .src{font-variant-numeric:tabular-nums;text-align:right;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- =================== HEADER =================== -->
+<div class="head">
+  <div>
+    <h1>以价换量：2.5 倍 GMV 背后的三个真相</h1>
+    <div class="sub">
+      Olist 2017 黑五大促复盘 · 人货场 + 履约 + 用户价值全视角
+      <span class="tag">ANTV G2 v5</span>
+      <span class="tag">SAAS OPERATIONS DASHBOARD</span>
+    </div>
+  </div>
+  <div class="meta">
+    <b>报告期</b> 2017-10-02 → 2017-12-31<br/>
+    <b>活动期</b> 2017-11-20 → 2017-11-26<br/>
+    <b>引擎</b> G2 5.x · 单文件离线版
+  </div>
+</div>
+
+<!-- =================== KPI STRIP =================== -->
+<div class="kpis" id="kpis"></div>
+
+<!-- =================== ROW A =================== -->
+<div class="row a">
+  <div class="card">
+    <h3>周序列 · GMV 节奏（13 周 · 截 2017-12-31）</h3>
+    <div class="ex"><span style="color:var(--mute)">淡灰底=基准期×5</span> · <span style="color:#3B82F6">淡蓝底=预热期×2</span> · <span style="color:#1D4ED8">深蓝底=活动期×1</span> · <span style="color:var(--mute)">淡灰蓝底=活动后×5</span> · 灰虚线=基准周均 R$164.8K · <b style="color:#1D4ED8">深蓝柱</b>=11.20 活动周 · 悬停任意柱=周明细</div>
+    <div id="a1" class="chart a1"></div>
+    <div class="cap"><b style="color:var(--ink)">读图顺序：</b>5 周基准（R$158-188K）→ 2 周预热蓄势（11.13 峰 R$201K）→ 11.20 黑五周冲 <b style="color:var(--brand)">R$412K（2.5×）</b> → 活动后 5 周逐周回落（12.25 周已降至 R$117K）· 阶段以<b>背景色带</b>区分 · 图上零文字，周明细（GMV / Δ / 订单 / 用户）<b>悬停查看</b></div>
+  </div>
+  <div class="card">
+    <h3>新客留存 · 双 cohort 各时点回购率对比</h3>
+    <div class="ex">4 时点 · 每时点双柱：<b style="color:var(--brand)">深蓝=活动 cohort</b> vs <span style="color:var(--mute)">浅灰=基准 cohort</span> · 数值 = 该 cohort 在 X 日内有回购的占比</div>
+    <div id="a2" style="height:340px"></div>
+    <div class="cap"><b style="color:var(--good)">反直觉发现：</b>活动 cohort <b>7 日回购 0.24%</b> 反而比基准 cohort <b>0.13%</b> 高 <b>+0.11pp</b>（短期粘性更好）；但 60-90 日持续落后 0.11-0.13pp → 经典「<b>低价拉新 + 长期掉队</b>」曲线</div>
+  </div>
+</div>
+
+<!-- =================== ROW NEW · 预热期专项诊断 =================== -->
+<div class="row warmup">
+  <div class="card warmup-card">
+    <h3>周均订单数 · 基准 → 预热 → 活动</h3>
+    <div class="ex">5 周基准 → 2 周预热 → 1 周活动期的订单规模轨迹</div>
+    <div class="big" id="w0-big">1,232</div>
+    <div class="delta-line" id="w0-delta"><span class="badge good">蓄势初显</span><span style="color:var(--mute)">vs 基准 1,027 单</span></div>
+    <div id="w0" class="chart wh"></div>
+    <div class="label-row">
+      <span>基准周均 <b>1,027 单</b></span>
+      <span>预热周均 <b>1,232 单</b></span>
+      <span>活动周 <b>2,533 单</b></span>
+    </div>
+  </div>
+  <div class="card warmup-card">
+    <h3>周均 GMV · 同口径轨迹</h3>
+    <div class="ex">预热 GMV +15.7% 蓄势，活动周冲高至 2.5 倍</div>
+    <div class="big" id="w1-big">R$190.7K</div>
+    <div class="delta-line" id="w1-delta"><span class="badge good">+15.7%</span><span style="color:var(--mute)">vs 基准 R$164.8K</span></div>
+    <div id="w1" class="chart wh"></div>
+    <div class="label-row">
+      <span>基准周均 <b>R$164.8K</b></span>
+      <span>预热周均 <b>R$190.7K</b></span>
+      <span>活动周 <b>R$412.1K</b></span>
+    </div>
+  </div>
+  <div class="card warmup-card">
+    <h3>客单价中位数 · 蓄势与挤压</h3>
+    <div class="ex">预热期客单中位数持平 · 活动期以价换量 −5.1%</div>
+    <div class="big" id="w2-big">R$101.73</div>
+    <div class="delta-line" id="w2-delta"><span class="badge bad">−5.1%</span><span style="color:var(--mute)">vs 基准 R$107.21</span></div>
+    <div id="w2" class="chart wh"></div>
+    <div class="label-row">
+      <span>基准中位 <b>R$107.21</b></span>
+      <span>预热中位 <b>≈持平</b></span>
+      <span>活动中位 <b>R$101.73</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- =================== ROW B =================== -->
+<div class="row b">
+  <div class="card">
+    <h3>TOP10 品类 · 基准周均 vs 活动期 GMV</h3>
+    <div class="ex">每类目上下两根柱：<span style="color:#94A3B8">浅灰=基准周均 GMV</span> · 深色（按象限着色）= 活动期 GMV · 柱长差距 = 黑五放量幅度 · 行尾 = 活动期 GMV</div>
+    <div id="b1" class="chart b1"></div>
+    <div class="cap">
+      <span style="color:var(--mute)">■</span> 基准周均 &nbsp;·&nbsp;
+      <span style="color:#1D4ED8">■</span> 明星（高规模+高增长）&nbsp;·&nbsp;
+      <span style="color:#16A34A">■</span> 现金牛（高规模低增长）&nbsp;·&nbsp;
+      <span style="color:#DC2626">■</span> 问题（低规模高增长）&nbsp;·&nbsp;
+      <span style="color:#94A3B8">■</span> 瘦狗（双低）
+    </div>
+  </div>
+  <div class="card">
+    <h3>品类 BCG 四象限</h3>
+    <div class="ex">中位十字分象限 · X 轴 GMV Y 轴增长率% · <b>悬停任意圆点查看明细</b>（类目/象限/GMV/基准/增长率/贡献度/订单）· 四角白底徽标 = 象限名（字色=象限色） · 明星=床品/美妆/家居 · <b style="color:#DC2626">问题=玩具/香水（香水 +281% 全榜第一，见下方 takeaway）</b></div>
+    <div class="b2-wrap">
+      <div id="b2" class="chart b2"></div>
+      <span class="quadrant-chip chip-star">明星</span>
+      <span class="quadrant-chip chip-q">问题</span>
+      <span class="quadrant-chip chip-cow">现金牛</span>
+      <span class="quadrant-chip chip-dog">瘦狗</span>
+    </div>
+    <div class="cap" style="margin-top:8px;border-top:1px dashed #E2E8F0;padding-top:8px">
+      <span style="color:#DC2626">●</span> <b>问题象限黑马：香水 perfumery</b> 增长率 <b style="color:#DC2626">+281%</b> 全榜第一，GMV 仅 R$16K（受品类天花板限制）— 与玩具并列，是潜力挖掘候选
+    </div>
+  </div>
+</div>
+
+<!-- =================== ROW C =================== -->
+<div class="card row c-wrap">
+  <h3>履约链路 · 4 指标 small multiples（已剔除分期付款 — 支付行为非履约）</h3>
+  <div class="ex">活动期 vs 基准期同指标对比 · 各行自有刻度（单位不同无法共用 Y 轴） · 浅=基准 深=活动期 · 业务语义色：绿=利好 红=恶化</div>
+  <div class="row c" style="margin-top:10px">
+    <div><div class="mini-h" id="c0-h"></div><div id="c0" class="chart c"></div></div>
+    <div><div class="mini-h" id="c1-h"></div><div id="c1" class="chart c"></div></div>
+    <div><div class="mini-h" id="c2-h"></div><div id="c2" class="chart c"></div></div>
+    <div><div class="mini-h" id="c3-h"></div><div id="c3" class="chart c"></div></div>
+  </div>
+</div>
+
+<!-- =================== FOOTER =================== -->
+<div class="foot">
+  <div class="lim">
+    <b>局限性：</b>Olist 公开样本，州际漏斗与品类毛利不可得；评分字段空值率高；活动期口径按 11.20–11.26 整周窗口对齐 KPI；留存基准 30 日为实测，其余窗口按比例估算。<br/>
+    <b>数据源：</b>Olist Brazilian E-Commerce (Kaggle) · 9 张原始表 · 本地复算与 V3 人工修订。
+  </div>
+  <div class="src">
+    OLIST · BLACK FRIDAY REVIEW · 2026.09<br/>
+    RENDERED WITH ANT-V G2 v5
+  </div>
+</div>
+
+</div><!-- container -->
+
+<!-- =================== DATA (V3 修正已应用) =================== -->
+<script type="application/json" id="dd">
+{
+  "kpi": {
+    "gmv":       { "active": 412055, "base_weekly": 164811, "pct": 150.0 },
+    "users":     { "active": 2499,   "base_weekly": 951,    "pct": 162.7 },
+    "orders":    { "active": 2533,   "base_weekly": 965,    "pct": 162.6 },
+    "aov_med":   { "active": 101.73, "base": 107.21,        "pct": -5.1 },
+    "retention90": { "active": 0.98 },
+    "ontime":    { "active": 80.8,   "base": 94.6,          "pp": -13.8 },
+    "score":     { "active": 3.85,   "base": 4.20,          "diff": -0.36 }
+  },
+  "weekly": [
+    { "week": "2017-10-02", "phase": "基准期", "gmv": 164000, "orders": 975,  "users": 963,  "cancel": 0.30 },
+    { "week": "2017-10-09", "phase": "基准期", "gmv": 170926, "orders": 1030, "users": 1019, "cancel": 0.65 },
+    { "week": "2017-10-16", "phase": "基准期", "gmv": 187814, "orders": 1105, "users": 1092, "cancel": 0.61 },
+    { "week": "2017-10-23", "phase": "基准期", "gmv": 158222, "orders": 950,  "users": 939,  "cancel": 0.61 },
+    { "week": "2017-10-30", "phase": "基准期", "gmv": 162910, "orders": 900,  "users": 889,  "cancel": 0.53 },
+    { "week": "2017-11-06", "phase": "预热期", "gmv": 180025, "orders": 1168, "users": 1163, "cancel": 0.99 },
+    { "week": "2017-11-13", "phase": "预热期", "gmv": 201378, "orders": 1259, "users": 1245, "cancel": 0.76 },
+    { "week": "2017-11-20", "phase": "活动期", "gmv": 412055, "orders": 2533, "users": 2499, "cancel": 0.30 },
+    { "week": "2017-11-27", "phase": "活动后", "gmv": 307936, "orders": 2047, "users": 2028, "cancel": 0.19 },
+    { "week": "2017-12-04", "phase": "活动后", "gmv": 252300, "orders": 1631, "users": 1612, "cancel": 0.18 },
+    { "week": "2017-12-11", "phase": "活动后", "gmv": 214103, "orders": 1367, "users": 1352, "cancel": 0.14 },
+    { "week": "2017-12-18", "phase": "活动后", "gmv": 145914, "orders": 952,  "users": 946,  "cancel": 0.31 },
+    { "week": "2017-12-25", "phase": "活动后", "gmv": 117071, "orders": 857,  "users": 852,  "cancel": 0.11 },
+    { "week": "2018-01-01", "phase": "活动后", "gmv": 207717, "orders": 1341, "users": 1335, "cancel": 0.07 },
+    { "week": "2018-01-08", "phase": "活动后", "gmv": 271111, "orders": 1738, "users": 1726, "cancel": 0.00 },
+    { "week": "2018-01-15", "phase": "活动后", "gmv": 251585, "orders": 1704, "users": 1683, "cancel": 0.17 },
+    { "week": "2018-01-22", "phase": "活动后", "gmv": 241349, "orders": 1545, "users": 1523, "cancel": 1.07 },
+    { "week": "2018-01-29", "phase": "活动后", "gmv": 228049, "orders": 1561, "users": 1541, "cancel": 1.56 },
+    { "week": "2018-02-05", "phase": "活动后", "gmv": 232085, "orders": 1541, "users": 1512, "cancel": 1.20 },
+    { "week": "2018-02-12", "phase": "活动后", "gmv": 223560, "orders": 1595, "users": 1558, "cancel": 1.16 },
+    { "week": "2018-02-19", "phase": "活动后", "gmv": 180480, "orders": 1294, "users": 1264, "cancel": 1.13 }
+  ],
+  "top10": [
+    { "cat": "bed_bath_table",         "gmv": 40658, "share": 9.9, "base_weekly": 12147, "growth": 235, "contribution": 11.5, "quadrant": "明星", "orders": 308 },
+    { "cat": "watches_gifts",          "gmv": 38648, "share": 9.4, "base_weekly": 15493, "growth": 149, "contribution": 9.4,  "quadrant": "现金牛", "orders": 135 },
+    { "cat": "health_beauty",          "gmv": 36143, "share": 8.8, "base_weekly": 10605, "growth": 241, "contribution": 10.3, "quadrant": "明星", "orders": 184 },
+    { "cat": "computers_accessories",  "gmv": 30743, "share": 7.5, "base_weekly": 10629, "growth": 189, "contribution": 8.1,  "quadrant": "现金牛", "orders": 140 },
+    { "cat": "furniture_decor",        "gmv": 30082, "share": 7.3, "base_weekly": 8035,  "growth": 274, "contribution": 8.9,  "quadrant": "明星", "orders": 195 },
+    { "cat": "sports_leisure",         "gmv": 23586, "share": 5.7, "base_weekly": 12705, "growth": 86,  "contribution": 4.4,  "quadrant": "瘦狗", "orders": 178 },
+    { "cat": "toys",                   "gmv": 23489, "share": 5.7, "base_weekly": 7825,  "growth": 200, "contribution": 6.3,  "quadrant": "问题", "orders": 145 },
+    { "cat": "cool_stuff",             "gmv": 19606, "share": 4.8, "base_weekly": 11393, "growth": 72,  "contribution": 3.3,  "quadrant": "瘦狗", "orders": 77 },
+    { "cat": "garden_tools",           "gmv": 19418, "share": 4.7, "base_weekly": 6882,  "growth": 182, "contribution": 5.1,  "quadrant": "瘦狗", "orders": 188 },
+    { "cat": "perfumery",              "gmv": 16181, "share": 3.9, "base_weekly": 4246,  "growth": 281, "contribution": 4.8,  "quadrant": "问题", "orders": 114 }
+  ],
+  "top10_share_sum": 67.6,
+  "fulfillment": [
+    { "name": "订单取消率", "unit": "%", "base": 0.51, "active": 0.27,  "diff": -0.24, "good_when": "neg" },
+    { "name": "发货时效",   "unit": "天", "base": 2.6,  "active": 3.4,   "diff":  0.8,  "good_when": "neg" },
+    { "name": "准时送达率", "unit": "%", "base": 94.6, "active": 80.8,  "diff": -13.8, "good_when": "neg" },
+    { "name": "用户评分",   "unit": "分", "base": 4.20, "active": 3.85,  "diff": -0.36, "good_when": "neg" }
+  ],
+  "retention": {
+    "active_cohort": 2456,
+    "base_cohort":   4660,
+    "days":  [7, 30, 60, 90],
+    "active": [0.24, 0.69, 0.81, 0.98],
+    "base":   [0.13, 0.73, 0.94, 1.09]
+  },
+  "warmup": {
+    "base_weekly_orders": 1027,
+    "warmup_weekly_orders": 1232,
+    "active_orders": 2533,
+    "base_weekly_gmv":  164811,
+    "warmup_weekly_gmv":190702,
+    "active_gmv":       412055,
+    "base_aov_med":     107.21,
+    "warmup_aov_med":   107.21,
+    "active_aov_med":   101.73
+  }
+}
+</script>
+
+<!-- =================== G2 v5 =================== -->
+<script src="../_assets/g2.min.js"></script>
+
+<script>
+(function(){
+'use strict';
+if(!window.G2 || !G2.Chart){ console.error('[G2] not loaded'); return; }
+window.__regC = (id, c) => { (window.__charts = window.__charts || []).push({ id, c }); };
+
+/* ========== DATA ========== */
+const D = JSON.parse(document.getElementById('dd').textContent);
+const { kpi, weekly, top10, fulfillment, retention, warmup } = D;
+
+/* ========== COLOR TOKENS ========== */
+const C = {
+  ink:'#0F172A', mute:'#64748B', faint:'#94A3B8',
+  brand:'#1D4ED8', brand2:'#3B82F6', brand3:'#0EA5E9',
+  good:'#16A34A', bad:'#DC2626', warn:'#F59E0B',
+  card:'#FFFFFF', border:'#E5E7EB',
+  phaseBase:'#94A3B8', phaseWarm:'#3B82F6', phaseAct:'#1D4ED8', phaseAfter:'#CBD5E1'
+};
+
+/* ========== HELPERS ========== */
+const fmtK = v => {
+  if(v==null) return '';
+  const a = Math.abs(v);
+  if(a >= 1000) return (v/1000).toFixed(a>=10000?0:1) + 'K';
+  return v.toFixed(a<10?2:0);
+};
+const roundPer1000 = pct => Math.round(pct * 10);  // 0.24% -> 2.4 -> 2
+const fmtPct = v => v.toFixed(2) + '%';
+const fmtPP = v => (v>0?'+':'') + v + 'pp';
+const fmtDay = v => '+' + v + ' 天';
+const fmtScore = v => (v>0?'+':'') + v + ' 分';
+
+/* ========== KPI CARDS ========== */
+/* outcome 业务语义：good=有利业务变化（绿）, bad=不利业务变化（红）, warn=中性/警示
+   与数值涨跌方向无关：即使数字是 −5.1%，若"以价换量"是策略意图，仍判为 bad
+   因为它代表客单价下行，不应被读作"利好"。 */
+const kpis = [
+  { lab:'活动期 GMV',     val:'R$412,055', d:+150, dFmt:'+150%',   ctx:'vs 基准周均 R$164.8K',            outcome:'good' },
+  { lab:'活动用户数',     val:'2,499',     d:+163, dFmt:'+163%',   ctx:'vs 基准周均 951 人',              outcome:'good' },
+  { lab:'预热期订单增幅', val:'+20%',      d:+20,  dFmt:'+20%',    ctx:'vs 基准周均 1,027 单 · 客单未涨',  outcome:'good' },
+  { lab:'客单价中位数',   val:'R$101.73',  d:-5.1, dFmt:'−5.1%',   ctx:'vs 基准 R$107.21 · 以价换量',     outcome:'bad'  },
+  { lab:'90 日新客留存',  val:'0.98%',     d:-0.11, dFmt:'−0.11pp vs 基准 1.09%', ctx:'但 7 日反超 +0.11pp · 短期 vs 长期分化', outcome:'warn' },
+  { lab:'准时送达率',     val:'80.8%',     d:-13.8,dFmt:'−13.8pp', ctx:'vs 基准 94.6% · 履约瓶颈',        outcome:'bad'  },
+];
+const kpisEl = document.getElementById('kpis');
+kpisEl.innerHTML = kpis.map(k => `
+  <div class="kpi">
+    <div class="lab">${k.lab}</div>
+    <div class="val num">${k.val}</div>
+    <div class="delta ${k.outcome}">${k.dFmt}</div>
+    <div class="ctx">${k.ctx}</div>
+  </div>
+`).join('');
+
+/* ====================================================
+   A1 · 周序列 GMV 节奏 · 13 周（截 2017-12-31）
+   图上零文字 · 周明细走悬停 tooltip + 十字准星
+   ==================================================== */
+(function(){
+  // 只展示到 2017-12-31 所在周（2017-12-25 起）→ 13 周
+  const data = weekly.filter(w => w.week <= '2017-12-25');
+  const BASELINE = 164811;   // 基准周均 GMV（KPI / 灰虚线同源）
+  const MAX_Y    = 470000;
+
+  // 周区间标签: '2017-11-20' → '11/20 ~ 11/26'
+  function wkRange(w){
+    const d = new Date(w + 'T00:00:00Z');
+    d.setUTCDate(d.getUTCDate() + 6);
+    return w.slice(5).replace('-','/') + ' ~ ' + d.toISOString().slice(5,10).replace('-','/');
+  }
+
+  const chart = new G2.Chart({ container:'a1', autoFit:true, height:340, padding:[30,28,18,44] });
+  chart.options({
+    type:'view',
+    legend: false,
+    scale:{
+      color:{ domain:['基准期','预热期','活动期','活动后'], range:[C.phaseBase,C.phaseWarm,C.phaseAct,C.phaseAfter] },
+      x:{ padding:0.18 },
+      y:{ nice:true, max:MAX_Y }
+    },
+    axis:{
+      x:{ labelFormatter:d=>d.slice(5), labelFontSize:9, tickCount:13 },
+      y:{ title:'GMV (R$)', labelFormatter:v=>fmtK(v), labelFontSize:10 }
+    },
+    children:[
+      // 1) 阶段背景色带：每周一根全高低透明同色块，同阶段周相连成带
+      {
+        type:'interval',
+        data: data.map(w => ({ week:w.week, phase:w.phase, top:MAX_Y })),
+        encode:{ x:'week', y:'top', color:'phase' },
+        style:{ fillOpacity:0.10, radiusTop:0 },
+        interaction:{ tooltip:false }
+      },
+      // 2) 主柱：按阶段着色（半透明 + 白描边，露出背景色带）
+      {
+        type:'interval',
+        data,
+        encode:{ x:'week', y:'gmv', color:'phase' },
+        style:{ radiusTop:3, stroke:'#FFFFFF', lineWidth:1, fillOpacity:.96 },
+        interaction:{ tooltip:{ crosshairs:true } },
+        // 每根柱悬停 tooltip：周区间+阶段(title) + GMV + vs 基准 + 订单/用户
+        tooltip:{
+          title:(d)=>wkRange(d.week)+' · '+d.phase,
+          items:[
+            (d)=>({ name:'GMV', value:'R$'+fmtK(d.gmv||0) }),
+            (d)=>{ const p=((d.gmv||0)/BASELINE-1)*100;
+                   return { name:'vs 基准', value:(p>=0?'+':'−')+Math.abs(Math.round(p))+'%' }; },
+            (d)=>({ name:'订单 / 用户',
+                    value:(d.orders!=null?d.orders.toLocaleString():'-')+' 单 · '
+                         +(d.users!=null?d.users.toLocaleString():'-')+' 人' })
+          ]
+        }
+      },
+      // 3) 基准虚线
+      {
+        type:'lineY',
+        data:[{v:164811}],
+        encode:{ y:'v' },
+        style:{ stroke:C.faint, strokeDasharray:[3,3], lineWidth:1 }
+      },
+    ]
+  });
+  chart.render(); if(window.__regC) window.__regC(chart.container, chart);
+})();
+
+/* ====================================================
+   A2 · 留存双 cohort · 四时点分组双柱对比
+   数据：tableau_retention.csv 实际值
+   base[7]=0.13 → 活动 7 日反超 +0.11pp（反直觉发现）
+   ==================================================== */
+(function(){
+  const longData = [];
+  retention.days.forEach((day, i) => {
+    const av = retention.active[i], bv = retention.base[i];
+    longData.push({ day: day+'日', cohort:'活动 cohort', val: av });
+    longData.push({ day: day+'日', cohort:'基准 cohort', val: bv });
+  });
+
+  const chart = new G2.Chart({ container:'a2', autoFit:true, height:340, padding:[26,16,24,42] });
+  chart.options({
+    type:'view',
+    data: longData,
+    legend: false,
+    scale:{
+      color:{ domain:['活动 cohort','基准 cohort'], range:[C.brand, '#CBD5E1'] },
+      y:{ nice:false, max:1.8, tickCount:7 }
+    },
+    axis:{
+      x:{ labelFontSize:11, labelFontWeight:600, labelFormatter:v=>v },
+      y:{ title:'回购率 (%)', labelFormatter:v=>v.toFixed(1)+'%', labelFontSize:9 }
+    },
+    children:[
+      {
+        type:'interval',
+        encode:{ x:'day', y:'val', color:'cohort' },
+        transform:[{ type:'dodgeX' }],
+        style:{ radiusTop:4, stroke:'#FFFFFF', lineWidth:1.5 },
+        // 每根柱悬停 tooltip：天数+cohort(title) + 回购率
+        tooltip:{
+          title:(d)=>d.day+' · '+d.cohort,
+          items:[(d)=>({ name:'回购率', value:d.val.toFixed(2)+'%' })]
+        },
+        labels:[{
+          text:d=>d.val.toFixed(2)+'%',
+          position:'top',
+          dy:-2,
+          style:{ fontSize:10.5, fontWeight:700, fill:C.ink }
+        }]
+      },
+      // 7 日反超标注（绿）· 活动 0.24 > 基准 0.13
+      { type:'text', data:[{ day:'7日',  y:0.50, t:'反超\n+0.11pp' }],
+        encode:{ x:'day', y:'y', text:'t' },
+        style:{ fill:C.good, fontSize:11, fontWeight:800, textAlign:'center' } },
+      // 30 日 ≈ 持平（灰小字）
+      { type:'text', data:[{ day:'30日', y:1.00, t:'≈ 持平' }],
+        encode:{ x:'day', y:'y', text:'t' },
+        style:{ fill:C.mute, fontSize:9.5, fontWeight:600, textAlign:'center' } },
+      // 60 日掉队（红）
+      { type:'text', data:[{ day:'60日', y:1.30, t:'开始掉队\n−0.13pp' }],
+        encode:{ x:'day', y:'y', text:'t' },
+        style:{ fill:C.bad, fontSize:11, fontWeight:800, textAlign:'center' } },
+      // 90 日仍落后（红）
+      { type:'text', data:[{ day:'90日', y:1.55, t:'仍落后\n−0.11pp' }],
+        encode:{ x:'day', y:'y', text:'t' },
+        style:{ fill:C.bad, fontSize:11, fontWeight:800, textAlign:'center' } }
+    ]
+  });
+  chart.render(); if(window.__regC) window.__regC(chart.container, chart);
+})();
+
+/* ====================================================
+   B1 · TOP10 品类 基准周均 vs 活动期 GMV · 横向分组双柱
+   encode: x=cat(分类) y=gmv(数值) → dodgeX 分组 → transpose 变横向
+   颜色：基准周均=浅灰 #CBD5E1 · 活动柱按象限着色
+   ==================================================== */
+(function(){
+  // 按活动期 gmv 升序生成行序（基准行 + 活动行成对）
+  const catOrder = top10.slice().sort((a,b)=>a.gmv - b.gmv);
+  const rows = [];
+  catOrder.forEach(t => {
+    rows.push({ cat:t.cat, cohort:'基准周均', gmv:t.base_weekly });
+    rows.push({ cat:t.cat, cohort:t.quadrant, gmv:t.gmv, growth:t.growth, share:t.share });
+  });
+
+  const chart = new G2.Chart({ container:'b1', autoFit:true, height:470, padding:[16,130,12,132] });
+  chart.options({
+    type:'view',
+    data: rows,
+    legend: false,
+    coordinate:{ transform:[{ type:'transpose' }] },
+    scale:{
+      color:{ domain:['基准周均','明星','现金牛','问题','瘦狗'],
+              range:['#CBD5E1','#1D4ED8','#16A34A','#DC2626','#94A3B8'] },
+      x:{ padding:0.12 },
+      y:{ nice:true }
+    },
+    axis:{
+      x:{ labelFontSize:9.5, labelFormatter:v=>v },
+      y:{ title:'GMV (R$)', labelFormatter:v=>fmtK(v), labelFontSize:9 }
+    },
+    children:[
+      {
+        type:'interval',
+        encode:{ x:'cat', y:'gmv', color:'cohort' },
+        transform:[{ type:'dodgeX' }],
+        legend:false,
+        style:{ radiusTop:2, stroke:'#FFFFFF', lineWidth:1 },
+        // 每根柱悬停 tooltip：品类(title) + 活动期/基准 GMV + 增长率/份额
+        tooltip:{
+          title:(d)=>d.cat,
+          items:[
+            (d)=>({ name:d.cohort==='基准周均' ? '基准周均 GMV' : '活动期 GMV · '+d.quadrant,
+                    value:'R$'+fmtK(d.gmv) }),
+            (d)=>({ name:'基准周均', value:'R$'+fmtK((top10.find(t=>t.cat===d.cat)||{}).base_weekly||0) }),
+            (d)=>({ name:'增长率 / 份额',
+                    value:d.growth!=null ? '+'+d.growth+'% · 份额 '+d.share+'%' : '—' })
+          ]
+        },
+        labels:[{
+          // 活动柱右端标 GMV；增长率放在 cap 一行（避免柱端标签过长压到相邻品类名）
+          text: d => d.cohort==='基准周均' ? '' : `${fmtK(d.gmv)}`,
+          position:'right', dx:5,
+          style:{ fill:C.ink, fontSize:10, fontWeight:700 }
+        }]
+      }
+    ]
+  });
+  chart.render(); if(window.__regC) window.__regC(chart.container, chart);
+})();
+
+/* ====================================================
+   B2 · BCG 散点
+   ==================================================== */
+(function(){
+  const data = top10.slice();
+  const medianGmv = 26800, medianGrowth = 195;
+  const quadColors = { '明星':'#1D4ED8', '现金牛':'#16A34A', '问题':'#DC2626', '瘦狗':'#94A3B8' };
+
+  const chart = new G2.Chart({ container:'b2', autoFit:true, height:470, padding:[28,28,24,42] });
+  chart.options({
+    type:'view',
+    data,
+    legend: false,
+    scale:{
+      color:{ domain:['明星','现金牛','问题','瘦狗'], range:[quadColors['明星'],quadColors['现金牛'],quadColors['问题'],quadColors['瘦狗']] },
+      size:{ range: [12, 36], field: 'gmv', scaleType: 'sqrt' },
+      x:{ nice:true, domainMin:12000 },  // 起点≤12K 把 perfumery(gmv=16181)纳入图内（否则 X 轴 nice 到 20K，整点裁掉）
+      y:{ nice:true, domainMin:50 }
+    },
+    axis:{
+      x:{ title:'活动期 GMV (R$)', labelFormatter:v=>fmtK(v), labelFontSize:9 },
+      y:{ title:'增长率 %', labelFontSize:9 }
+    },
+    interaction:{ elementHighlight:{ hover:true, background:true } },
+    children:[
+      {
+        type:'point',
+        encode:{ x:'gmv', y:'growth', color:'quadrant', size:'gmv', shape:'circle' },
+        // 每个球悬停 tooltip：品类名(title) + 象限 + GMV + 增幅 + 贡献/订单
+        // 注意：本地 G2 v5 包没有 itemFormatter API，正确用法是 mark 级 tooltip:{title, items}
+        interaction:{ elementHighlight:{ hover:true, background:true } },
+        state:{ active:{ lineWidth:3, fillOpacity:1 } },
+        style:(d)=> d.cat===''
+          ? { stroke:C.card, lineWidth:3, fillOpacity:1 }
+          : { stroke:C.card, lineWidth:2, fillOpacity:0.85 },
+        tooltip:{
+          title:(d)=>d.cat,
+          items:[
+            (d)=>({ name:'象限', value:d.quadrant }),
+            (d)=>({ name:'活动期 GMV', value:'R$'+fmtK(d.gmv) }),
+            (d)=>({ name:'增幅 vs 基准周均', value:'+'+d.growth+'%' }),
+            (d)=>({ name:'贡献度 / 订单', value:d.contribution+'% · '+d.orders+' 单' })
+          ]
+        }
+      },
+      { type:'lineX', data:[{v:medianGmv}], encode:{ x:'v' }, style:{ stroke:C.mute, strokeDasharray:[2,3], lineWidth:.8 } },
+      { type:'lineY', data:[{v:medianGrowth}], encode:{ y:'v' }, style:{ stroke:C.mute, strokeDasharray:[2,3], lineWidth:.8 } },
+      // 黑马 text mark：常驻显示 perfumery 白底 pill
+      { type:'text', data:data.filter(d=>d.cat===''),
+        encode:{ x:'gmv', y:'growth', text:'cat' },
+        position:'top', dy:-12,
+        style:{ fontSize:11, fontWeight:800, fill:'#DC2626',
+                backgroundFill:'rgba(255,255,255,.97)', backgroundRadius:99,
+                padding:[3,8,3,8] }
+      }
+    ]  // 象限角标已移至 .b2-wrap HTML chip（脱离 G2 mark 渲染）
+  });
+  chart.render(); if(window.__regC) window.__regC(chart.container, chart);
+})();
+
+/* ====================================================
+   WARMUP · 预热期 3 卡 · 三时段指标轨迹
+   ==================================================== */
+const WARM_COLORS = { '基准周均':C.faint, '预热周均':C.brand2, '活动周':C.brand };
+const fmtNum = v => v >= 1000 ? fmtK(v) : Math.round(v).toString();
+
+(function renderWarmup(){
+  // 通用：3-bar grouped interval （基准/预热/活动）+ 数值标签 + 阶段着色
+  const renderBars = (id, data, fmt) => {
+    const chart = new G2.Chart({ container:id, autoFit:true, height:200, padding:[18,12,4,32] });
+    chart.options({
+      type:'interval',
+      data,
+      legend: false,
+      encode:{ x:'phase', y:'val', color:'phase' },
+      scale:{ color:{ domain:['基准周均','预热周均','活动周'], range:[WARM_COLORS['基准周均'],WARM_COLORS['预热周均'],WARM_COLORS['活动周']] }, x:{ padding:0.3 } },
+      axis:{ x:{ labelFontSize:10, labelFontWeight:600 }, y:{ labelFontSize:9, nice:true, labelFormatter:v=>fmt(v) } },
+      style:{ radiusTop:4 },
+      labels:[{ text:d=>fmt(d.val), position:'top', style:{ fontSize:11, fontWeight:700, fill:C.ink, dy:-2 } }],
+      // 每根柱悬停 tooltip：阶段(title) + 周均值
+      tooltip:{ title:(d)=>d.phase, items:[(d)=>({ name:'周均', value:fmt(d.val) })] }
+    });
+    chart.render(); if(window.__regC) window.__regC(chart.container, chart);
+  };
+
+  // w0 · 周均订单数
+  renderBars('w0', [
+    { phase:'基准周均', val: warmup.base_weekly_orders },
+    { phase:'预热周均', val: warmup.warmup_weekly_orders },
+    { phase:'活动周',   val: warmup.active_orders }
+  ], v => v>=1000?(v/1000).toFixed(1)+'K':Math.round(v));
+
+  // w1 · 周均 GMV
+  renderBars('w1', [
+    { phase:'基准周均', val: warmup.base_weekly_gmv },
+    { phase:'预热周均', val: warmup.warmup_weekly_gmv },
+    { phase:'活动周',   val: warmup.active_gmv }
+  ], v => 'R$'+fmtK(v));
+
+  // w2 · 客单价中位数
+  renderBars('w2', [
+    { phase:'基准周均', val: warmup.base_aov_med },
+    { phase:'预热周均', val: warmup.warmup_aov_med },
+    { phase:'活动周',   val: warmup.active_aov_med }
+  ], v => 'R$'+v.toFixed(0));
+})();
+
+/* ====================================================
+   C · 履约 4 指标 small multiples
+   ==================================================== */
+(function(){
+  const units = { '%':'pp', '天':' 天', '分':' 分', '':'' };
+  fulfillment.forEach((it, idx) => {
+    const data = [
+      { phase:'基准期', val:it.base },
+      { phase:'活动期', val:it.active }
+    ];
+    // header
+    const head = document.getElementById('c'+idx+'-h');
+    // 业务语义色：good_when=neg 表示"数值越低越好"，good_when=pos 表示"数值越高越好"
+    // 取消率 −0.24pp：是好事 → good (绿)
+    // 发货 +0.8天：是坏事 → bad (红)
+    // 准时率 −13.8pp：是坏事 → bad (红)
+    // 评分 −0.36分：是坏事 → bad (红)
+    const sign = it.diff > 0 ? '+' : '';
+    const isGood = (it.good_when === 'pos' && it.diff > 0) || (it.good_when === 'neg' && it.diff < 0);
+    const isBad  = (it.good_when === 'pos' && it.diff < 0) || (it.good_when === 'neg' && it.diff > 0);
+    const cls = isGood ? 'good' : isBad ? 'bad' : 'warn';
+    const suf = it.unit === '%' ? 'pp' : (it.unit === '天' ? ' 天' : (it.unit === '分' ? ' 分' : ''));
+    head.innerHTML = `
+      <div class="name">${it.name} <span class="unit">(${it.unit})</span></div>
+      <div class="diff num ${cls}">${sign}${it.diff}${suf}</div>
+    `;
+
+    const chart = new G2.Chart({ container:'c'+idx, autoFit:true, height:170, padding:[18,16,8,28] });
+    chart.options({
+      type:'interval',
+      data,
+      encode:{ x:'phase', y:'val', color:'phase' },
+      scale:{
+        color:{ domain:['基准期','活动期'], range:[C.faint, C.brand] },
+        x:{ padding:0.4 }
+      },
+      axis:{
+        x:{ labelFontSize:10, labelFontWeight:600 },
+        y:{ labelFontSize:9, nice:true }
+      },
+      style:{ radiusTop:4 },
+      labels:[{
+        text:d=>d.val + (it.unit==='%'?'%':(it.unit==='天'?' 天':(it.unit==='分'?' 分':''))),
+        position:'top',
+        style:{ fontSize:10, fontWeight:700, fill:C.ink, dy:-2 }
+      }],
+      // 每根柱悬停 tooltip：阶段(title) + 指标值
+      tooltip:{ title:(d)=>d.phase, items:[(d)=>({ name:it.name, value:d.val+(it.unit==='%'?'%':it.unit) })] }
+    });
+    chart.render(); if(window.__regC) window.__regC(chart.container, chart);
+  });
+})();
+
+})();
+</script>
+
+</body>
+</html>
